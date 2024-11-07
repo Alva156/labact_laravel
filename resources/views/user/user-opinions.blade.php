@@ -10,6 +10,10 @@
                         style="background-color:#001C43">
                         Share Your Thought?
                     </a>
+                    <a href="{{ route('user-myopinions') }}" class="mb-4 btn btn-lg text-light"
+                        style="background-color:green">
+                        My Opinions
+                    </a>
 
                     @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -35,6 +35,24 @@ class OpinionsController extends Controller
     public function usershare(){
         return view('user.user-share');
     }
+    public function myopinions(){
+        $opinions = Opinion::where('user_id', Auth::id())
+                            ->latest()
+                            ->withTrashed() // Include soft-deleted records
+                            ->paginate(5);
+        return view('user.user-myopinions', compact('opinions'));
+    }
+    
+    public function editopinions($id)
+{
+    $opinion = Opinion::find($id);
+    if ($opinion) {
+        return view('user.user-editopinions', ['opinion' => $opinion]);
+    } else {
+        abort(404, 'Opinion not found.');
+    }
+}
+   
     public function mopinions(){
         $opinions = Opinion::withTrashed()->latest()->paginate(5);
         return view('admin.manage-opinions', compact('opinions'));
@@ -61,41 +79,64 @@ class OpinionsController extends Controller
         return Redirect()->route('user-opinions')->with('success', 'Comment posted successfully!');
      
      }
+     public function updateopinion(Request $request, $id) {
+        // Validate the input
+        $validated = $request->validate([
+            'content' => 'required',
+        ],[
+            'content.required' => 'Please provide content for this field. It cannot be empty.',
+        ]);
+    
+        // Find the opinion by ID and update it
+        $opinion = Opinion::findOrFail($id);
+        $opinion->content = $request->content;
+        $opinion->updated_at = Carbon::now();
+        $opinion->save();
+    
+        // Redirect back with a success message
+        return redirect()->route('user-opinions')->with('success', 'Opinion updated successfully!');
+    }
+    
       // Soft delete a opinion
- public function destroy($id)
- {
-     $deleted = Opinion::where('id', $id)->delete();
-
-     if ($deleted) {
-         return redirect()->route('manage-opinions')->with('successsoft', 'Opinion deleted successfully.');
-     } else {
-         return abort(404, 'Game not found.');
-     }
- }
+      public function destroy($id)
+      {
+          $deleted = Opinion::where('id', $id)->delete();
+      
+          if ($deleted) {
+              $route = request()->is('manage-opinions') ? 'manage-opinions' : 'user-myopinions';
+              return redirect()->route($route)->with('successsoft', 'Opinion deleted successfully.');
+          } else {
+              return abort(404, 'Game not found.');
+          }
+      }
+      
 
  // Restore a soft-deleted opinion
  public function restore($id)
- {
-     $opinion = Opinion::withTrashed()->find($id);
+{
+    $opinion = Opinion::withTrashed()->find($id);
 
-     if ($opinion) {
-         $opinion->restore();
-         return redirect()->route('manage-opinions')->with('successrestore', 'Opinion restored successfully.');
-     } else {
-         return abort(404, 'Game not found.');
-     }
- }
+    if ($opinion) {
+        $opinion->restore();
+        $route = request()->is('manage-opinions') ? 'manage-opinions' : 'user-myopinions';
+        return redirect()->route($route)->with('successrestore', 'Opinion restored successfully.');
+    } else {
+        return abort(404, 'Game not found.');
+    }
+}
+
 
  // Permanently delete a soft-deleted opinion
  public function forceDelete($id)
- {
-     $opinion = Opinion::withTrashed()->find($id);
+{
+    $opinion = Opinion::withTrashed()->find($id);
 
-     if ($opinion) {
-         $opinion->forceDelete();
-         return redirect()->route('manage-opinions')->with('successdelete', 'Opinion permanently deleted.');
-     } else {
-         return abort(404, 'Game not found.');
-     }
- }
+    if ($opinion) {
+        $opinion->forceDelete();
+        $route = request()->is('manage-opinions') ? 'manage-opinions' : 'user-myopinions';
+        return redirect()->route($route)->with('successdelete', 'Opinion permanently deleted.');
+    } else {
+        return abort(404, 'Game not found.');
+    }
+}
 }

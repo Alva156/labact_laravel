@@ -21,7 +21,9 @@ Route::get('/history', [HistoriesController::class, 'history'])->name('history')
 Route::get('/faqs', [FaqsController::class, 'faqs'])->name('faqs');
 Route::get('/opinions', [OpinionsController::class, 'opinions'])->name('opinions');
 Route::get('/contact', [ProductController::class, 'contact'])->name('contact');
-
+Route::delete('/delete-opinion/{id}', [OpinionsController::class, 'destroy'])->name('delete-opinion');
+Route::post('/restore-opinion/{id}', [OpinionsController::class, 'restore'])->name('restore-opinion');
+Route::delete('/force-delete-opinion/{id}', [OpinionsController::class, 'forceDelete'])->name('force-delete-opinion');
 
 
 
@@ -73,9 +75,7 @@ Route::middleware([
 
         //Opinions Controller
     Route::get('/manage-opinions', [OpinionsController::class, 'mopinions'])->name('manage-opinions');
-    Route::delete('/delete-opinion/{id}', [OpinionsController::class, 'destroy'])->name('delete-opinion');
-    Route::post('/restore-opinion/{id}', [OpinionsController::class, 'restore'])->name('restore-opinion');
-    Route::delete('/force-delete-opinion/{id}', [OpinionsController::class, 'forceDelete'])->name('force-delete-opinion');
+    
 
         //Faqs Controller
     Route::get('/manage-faqs', [FaqsController::class, 'mfaqs'])->name('manage-faqs');
@@ -105,6 +105,10 @@ Route::middleware([
     Route::get('/user-share', [OpinionsController::class, 'usershare'])->name('user-share');
     Route::get('/user-opinions', [OpinionsController::class, 'useropinions'])->name('user-opinions');
     Route::post('/store-opinion', [OpinionsController::class, 'storesopinion'])->name('store-opinion');
+    Route::get('/user-myopinions', [OpinionsController::class, 'myopinions'])->name('user-myopinions');
+    Route::get('/user-editopinions/{id}', [OpinionsController::class, 'editopinions'])->name('user-editopinions');
+    Route::put('/user-updateopinion/{id}', [OpinionsController::class, 'updateopinion'])->name('user-updateopinion');
+    
 
          //Histories Controller
     Route::get('/user-history', [HistoriesController::class, 'userhistory'])->name('user-history');
