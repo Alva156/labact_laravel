@@ -2,11 +2,11 @@
     <div class="d-flex flex-column min-vh-100">
         <main class="flex-fill">
             <section class="bg-light py-5">
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row justify-content-center">
 
                         <!-- Main Content -->
-                        <div class="col-md-10 col-lg-8 px-4">
+                        <div class="col-md-10 px-4">
                             <div class="bg-white rounded shadow-sm p-4 mb-4 text-center">
                                 <h2>Manage Opinions</h2>
                                 <p>Here you can manage the fan's opinions.</p>

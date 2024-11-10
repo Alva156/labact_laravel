@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="d-flex flex-column min-vh-100">
         <section class="bg-light py-5 flex-grow-1">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row justify-content-center">
-                    <main class="col-md-10 col-lg-8 px-4">
+                    <main class="col-lg-10 px-4">
                         <div class="bg-white rounded shadow-sm p-4 mb-4 text-center">
                             <h2>Manage Shop</h2>
                             <p>Here you can create and manage the products in the Yankees Fan Zone shop. You can also
@@ -141,7 +141,7 @@
 
 
                         <!-- Transactions Table -->
-                        <div id="transactionsTable" class="table-responsive"
+                        <div id="transactionsTable" class="table-responsive "
                             style="{{ request('tab') !== 'transactions' ? 'display:none;' : '' }}">
                             <table class="table">
                                 <thead>
@@ -153,8 +153,10 @@
                                         <th scope="col">Address</th>
                                         <th scope="col">Contact Number</th>
                                         <th scope="col">Quantity</th>
+                                        <th scope="col">Price per Item</th>
+                                        <th scope="col">Total Price</th>
                                         <th scope="col">Created by</th>
-                                        <th scope="col">Created at</th>
+                                        <th scope="col">Date of Reservation</th>
                                         <th scope="col">Updated</th>
                                         <th scope="col">Deleted</th>
                                         <th scope="col"></th>
@@ -171,6 +173,8 @@
                                         <td>{{$buy->address}}</td>
                                         <td>{{$buy->number}}</td>
                                         <td>{{$buy->quantity}}</td>
+                                        <td>${{ $buy->product->price }}</td>
+                                        <td>${{ $buy->quantity * $buy->product->price }}</td>
                                         <td>{{$buy->user->name}}</td>
                                         <td>{{$buy->created_at->diffForHumans()}}</td>
                                         <td>{{ $buy->updated_at ? $buy->updated_at->diffForHumans() : '' }}</td>
@@ -306,7 +310,7 @@
                     <form id="deleteBuyForm" method="POST" class="d-inline-block">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
             </div>
@@ -330,7 +334,7 @@
                     <form id="restoreBuyForm" method="POST" class="d-inline-block">
                         @csrf
                         @method('POST')
-                        <button type="submit" class="btn btn-success">Yes, Restore</button>
+                        <button type="submit" class="btn btn-warning">Restore</button>
                     </form>
                 </div>
             </div>

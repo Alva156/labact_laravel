@@ -8,7 +8,12 @@
                             <h2>Your Reservations</h2>
                             <p>Here you can see your reservations made.</p>
                         </div>
-
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ route('user-shop') }}" class="mb-4 btn btn-lg text-light"
+                                style="background-color:#001C43">
+                                Return to Shop
+                            </a>
+                        </div>
                         <!-- Alert Messages -->
                         @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -29,8 +34,10 @@
                                         <th scope="col">Address</th>
                                         <th scope="col">Contact Number</th>
                                         <th scope="col">Quantity</th>
-
+                                        <th scope="col">Price per Item</th>
+                                        <th scope="col">Total Price</th>
                                         <th scope="col">Date of Reservation</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -42,8 +49,14 @@
                                         <td>{{$buy->address}}</td>
                                         <td>{{$buy->number}}</td>
                                         <td>{{$buy->quantity}}</td>
+                                        <td>${{ $buy->product->price }}</td>
+                                        <td>${{ $buy->quantity * $buy->product->price }}</td>
 
                                         <td>{{$buy->created_at->diffForHumans()}}</td>
+                                        <td><a href="{{ route('user-buyview', $buy->id) }}" class="btn btn-secondary">
+                                                <i class="fas fa-eye"></i>
+                                            </a></td>
+
                                     </tr>
                                     @endforeach
                                 </tbody>

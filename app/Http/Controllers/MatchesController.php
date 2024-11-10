@@ -36,6 +36,15 @@ class MatchesController extends Controller
     
         return view('admin.manage-schedule', compact('tickets', 'books'));
     }
+    public function userbookview($id)
+    {
+        $book = Book::find($id);
+        if ($book) {
+            return view('user.user-bookview', ['book' => $book]); 
+        } else {
+            abort(404, 'Match not found.'); 
+        }
+    }
     public function userbook($id)
     {
         $ticket = Tickets::find($id);
@@ -142,18 +151,16 @@ class MatchesController extends Controller
             'quantity.min' => 'The quantity must be at least 1',
         ]);
 
-        // Find the book by its ID
         $book = Book::findOrFail($id);
 
-        // Update the book's fields
         $book->fullname = $request->fullname;
         $book->address = $request->address;
         $book->number = $request->number;
         $book->quantity = $request->quantity;
-        $book->updated_at = Carbon::now();  // Update the timestamp
-        $book->save();  // Save the updated record
+        $book->updated_at = Carbon::now(); 
+        $book->save(); 
 
-        // Redirect with a success message
+        
         return redirect()->route('manage-schedule')->with('updatedbook', 'Ticket details updated successfully!');
     }
     

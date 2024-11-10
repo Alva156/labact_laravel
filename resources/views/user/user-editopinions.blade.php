@@ -7,11 +7,16 @@
                     <div class="row">
                         <!-- Opinion Display -->
                         <div class="col-md-4 mb-4">
-                            <div class="bg-white border rounded shadow-sm p-4 d-flex flex-column h-100">
-                                <div class="text-white p-3 rounded mb-3" style="background-color:#001C43;">
-                                    <h4 class="mb-0">{{ $opinion->user->name }}</h4>
+                            <div
+                                class="card shadow-sm border-light {{ $opinion->deleted_at ? 'bg-light text-muted' : '' }}">
+                                <div class="card-header text-white" style="background-color:#001C43">
+                                    {{$opinion->user->name}}
                                 </div>
-                                <p class="blockquote">{{ $opinion->content }}</p>
+                                <div class="card-body">
+                                    <p class="blockquote">
+                                        <i>{{$opinion->content}}</i>
+                                    </p>
+                                </div>
                             </div>
                         </div>
 

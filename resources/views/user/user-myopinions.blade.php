@@ -5,6 +5,10 @@
                 <div class="container">
                     <h1 class="display-4 mb-4">Your Opinions</h1>
                     <p class="lead mb-5">You can edit and delete your opinions.</p>
+                    <a href="{{ route('user-opinions') }}" class="mb-4 btn btn-lg text-light"
+                        style="background-color:#001C43">
+                        Return to Opinions
+                    </a>
                     @if (session('successupdate'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Your opinion has been updated successfully</strong>
@@ -48,26 +52,12 @@
                                         class=" btn btn-lg text-light" style="background-color:#001C43">
                                         <i class="fas fa-edit"></i>
                                     </a>
-
-                                    <!-- Delete/Restore Button -->
-                                    @if ($opinion->deleted_at)
-                                    <!-- Restore Button for Soft Deleted Opinions -->
-                                    <button class="btn btn-warning btn-lg text-light"
-                                        onclick="confirmRestore({{ $opinion->id }})">
-                                        <i class="fas fa-undo"></i>
-                                    </button>
-                                    <!-- Force Delete Button for Soft Deleted Opinions -->
                                     <button class="btn btn-danger btn-lg text-light"
                                         onclick="confirmPermanentDelete({{ $opinion->id }})">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
-                                    @else
-                                    <!-- Delete Button for Active Opinions -->
-                                    <button class="btn btn-danger btn-lg text-light"
-                                        onclick="confirmDelete({{ $opinion->id }})">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    @endif
+
+
                                 </div>
                             </div>
                         </div>
@@ -85,50 +75,7 @@
         </footer>
     </div>
 
-    <!-- Soft Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete this opinion?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form id="deleteForm" method="POST" action="">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Restore Confirmation Modal -->
-    <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="restoreModalLabel">Confirm Restoration</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to restore this opinion?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form id="restoreForm" method="POST" action="">
-                        @csrf
-                        <button type="submit" class="btn btn-warning">Restore</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Permanent Delete Confirmation Modal -->
     <div class="modal fade" id="permanentDeleteModal" tabindex="-1" aria-labelledby="permanentDeleteModalLabel"
@@ -155,18 +102,6 @@
     </div>
 
     <script>
-    function confirmDelete(opinionId) {
-        document.getElementById('deleteForm').action = `/delete-opinion/${opinionId}`;
-        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        deleteModal.show();
-    }
-
-    function confirmRestore(opinionId) {
-        document.getElementById('restoreForm').action = `/restore-opinion/${opinionId}`;
-        const restoreModal = new bootstrap.Modal(document.getElementById('restoreModal'));
-        restoreModal.show();
-    }
-
     function confirmPermanentDelete(opinionId) {
         document.getElementById('permanentDeleteForm').action = `/force-delete-opinion/${opinionId}`;
         const permanentDeleteModal = new bootstrap.Modal(document.getElementById('permanentDeleteModal'));

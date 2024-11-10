@@ -8,6 +8,12 @@
                             <h2>Your Reservations</h2>
                             <p>Here you can see your reservations made.</p>
                         </div>
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ route('user-schedule') }}" class="mb-4 btn btn-lg text-light"
+                                style="background-color:#001C43">
+                                Return to Schedule
+                            </a>
+                        </div>
 
                         <!-- Alert Messages -->
                         @if (session('success'))
@@ -30,8 +36,10 @@
 
                                         <th scope="col">Contact Number</th>
                                         <th scope="col">Quantity</th>
-
+                                        <th scope="col">Price per Item</th>
+                                        <th scope="col">Total Price</th>
                                         <th scope="col">Date of Reservation</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,8 +53,13 @@
                                         <td>{{$book->address}}</td>
                                         <td>{{$book->number}}</td>
                                         <td>{{$book->quantity}}</td>
+                                        <td>${{ $book->tickets->price }}</td>
+                                        <td>${{ $book->quantity * $book->tickets->price }}</td>
 
                                         <td>{{$book->created_at->diffForHumans()}}</td>
+                                        <td><a href="{{ route('user-bookview', $book->id) }}" class="btn btn-secondary">
+                                                <i class="fas fa-eye"></i>
+                                            </a></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

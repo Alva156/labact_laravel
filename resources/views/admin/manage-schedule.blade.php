@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="d-flex flex-column min-vh-100">
         <section class="bg-light py-5 flex-grow-1">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row justify-content-center">
-                    <main class="col-md-10 col-lg-8 px-4">
+                    <main class="col-md-10 px-4">
                         <div class="bg-white rounded shadow-sm p-4 mb-4 text-center">
                             <h2>Manage Schedule</h2>
                             <p>Here you can create and manage the Yankees game schedule and also see the transactions as
@@ -173,8 +173,10 @@
 
                                         <th scope="col">Contact Number</th>
                                         <th scope="col">Quantity</th>
+                                        <th scope="col">Price per Item</th>
+                                        <th scope="col">Total Price</th>
                                         <th scope="col">Created by</th>
-                                        <th scope="col">Created</th>
+                                        <th scope="col">Date of Reservation</th>
                                         <th scope="col">Updated</th>
                                         <th scope="col">Deleted</th>
                                         <th scope="col"></th>
@@ -193,6 +195,8 @@
                                         <td>{{$book->address}}</td>
                                         <td>{{$book->number}}</td>
                                         <td>{{$book->quantity}}</td>
+                                        <td>${{ $book->tickets->price }}</td>
+                                        <td>${{ $book->quantity * $book->tickets->price }}</td>
                                         <td>{{$book->user->name}}</td>
                                         <td>{{$book->created_at->diffForHumans()}}</td>
                                         <td>{{ $book->updated_at ? $book->updated_at->diffForHumans() : '' }}</td>

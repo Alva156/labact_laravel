@@ -31,8 +31,7 @@ Route::middleware([
     
     // Admin and User
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
-    Route::delete('/delete-opinion/{id}', [OpinionsController::class, 'destroy'])->name('delete-opinion');
-    Route::post('/restore-opinion/{id}', [OpinionsController::class, 'restore'])->name('restore-opinion');
+ 
     Route::delete('/force-delete-opinion/{id}', [OpinionsController::class, 'forceDelete'])->name('force-delete-opinion');
     
     // Admin
@@ -85,6 +84,8 @@ Route::middleware([
 
         //Opinions Controller
     Route::get('/manage-opinions', [OpinionsController::class, 'mopinions'])->name('manage-opinions');
+    Route::delete('/delete-opinion/{id}', [OpinionsController::class, 'destroy'])->name('delete-opinion');
+    Route::post('/restore-opinion/{id}', [OpinionsController::class, 'restore'])->name('restore-opinion');
     
 
         //Faqs Controller
@@ -103,12 +104,14 @@ Route::middleware([
         //Matches Controller
     Route::get('/user-schedule', [MatchesController::class, 'userschedule'])->name('user-schedule');
     Route::get('/user-book/{id}', [MatchesController::class, 'userbook'])->name('user-book');
+    Route::get('/user-bookview/{id}', [MatchesController::class, 'userbookview'])->name('user-bookview');
     Route::post('/store-book', [MatchesController::class, 'storebook'])->name('store-book');
     Route::get('/user-schedreserve', [MatchesController::class, 'userschedreserve'])->name('user-schedreserve');
 
         //Product Controller
     Route::get('/user-shop', [ProductController::class, 'usershop'])->name('user-shop');
     Route::get('/user-buy/{id}', [ProductController::class, 'userbuy'])->name('user-buy');
+    Route::get('/user-buyview/{id}', [ProductController::class, 'userbuyview'])->name('user-buyview');
     Route::post('/store-buy', [ProductController::class, 'storesbuy'])->name('store-buy');
     Route::get('/user-shopreserve', [ProductController::class, 'usershopreserve'])->name('user-shopreserve');
     Route::get('/user-product-post/{slug}', [ProductController::class, 'post'])->where('slug', '[a-zA-Z0-9\-]+')->name('user-product-post');

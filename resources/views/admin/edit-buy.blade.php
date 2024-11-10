@@ -10,9 +10,11 @@
                         <div class="col-md-4 mb-4">
                             <div class="bg-white border rounded shadow-sm p-4 d-flex flex-column h-100">
                                 <div class="text-white p-3 rounded mb-3" style="background-color:#001C43;">
-                                    <h4 class="mb-0">Buy ID: {{ $buy->id }}</h4>
+                                    <h4 class="mb-0">Transaction #: {{ $buy->id }}</h4>
                                 </div>
-
+                                <!-- Product Image -->
+                                <img src="{{ asset($buy->product->photo) }}" class="img-fluid mb-3"
+                                    style="object-fit: cover;">
                                 <p><strong>Product:</strong> {{ $buy->product->name ?? 'N/A' }}
                                 <p><strong>Customer Name:</strong> {{$buy->fullname}}
                                 <p><strong>Address:</strong> {{ $buy->address }}</p>

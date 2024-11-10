@@ -10,7 +10,7 @@
                         <div class="col-md-4 mb-4">
                             <div class="bg-white border rounded shadow-sm p-4 d-flex flex-column h-100">
                                 <div class="text-white p-3 rounded mb-3" style="background-color:#001C43;">
-                                    <h4 class="mb-0">Booking ID: {{ $book->id }}</h4>
+                                    <h4 class="mb-0">Transaction #: {{ $book->id }}</h4>
                                 </div>
 
                                 <p><strong>Match:</strong> {{ $book->tickets->first_team ?? 'N/A' }} vs

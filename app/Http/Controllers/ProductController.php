@@ -60,6 +60,7 @@ class ProductController extends Controller
         return view('admin.manage-shop', compact('products', 'buys'));
     
     }
+
    
     public function addproduct(){
         return view('admin.add-product');
@@ -70,6 +71,15 @@ class ProductController extends Controller
         $product = Product::find($id);
         if ($product) {
             return view('admin.edit-product', ['product' => $product]); 
+        } else {
+            abort(404, 'Product not found.'); 
+        }
+    }
+    public function userbuyview($id)
+    {
+        $buy = Buy::find($id);
+        if ($buy) {
+            return view('user.user-buyview', ['buy' => $buy]); 
         } else {
             abort(404, 'Product not found.'); 
         }
@@ -264,18 +274,18 @@ public function updatesbuy(Request $request, $id)
         'quantity.min' => 'The quantity must be at least 1',
     ]);
 
-    // Find the purchase by its ID
+    
     $buy = Buy::findOrFail($id);
 
-    // Update the Buy record's fields
+   
     $buy->fullname = $request->fullname;
     $buy->address = $request->address;
     $buy->number = $request->number;
     $buy->quantity = $request->quantity;
-    $buy->updated_at = Carbon::now();  // Update the timestamp
-    $buy->save();  // Save the updated record
+    $buy->updated_at = Carbon::now();  
+    $buy->save();  
 
-    // Redirect with a success message
+
     return redirect()->route('manage-shop')->with('updatedbuy', 'Purchase details updated successfully!');
 }
 
@@ -314,7 +324,7 @@ public function updatesbuy(Request $request, $id)
             unlink(public_path($product->photo)); // Deletes the image file
         }
 
-        // Permanently delete the product from the database
+       
         $product->forceDelete();
         
         return redirect()->route('manage-shop')->with('successdelete', 'Product permanently deleted.');
@@ -328,7 +338,7 @@ public function destroyBuy($id)
     $buy = Buy::where('id', $id)->first();
 
     if ($buy) {
-        $buy->delete(); // Soft delete the transaction
+        $buy->delete(); 
 
         return redirect()->route('manage-shop')->with('successsoftbuy', 'Transaction deleted successfully.');
     } else {
@@ -342,7 +352,7 @@ public function restoreBuy($id)
     $buy = Buy::withTrashed()->find($id);
 
     if ($buy) {
-        $buy->restore(); // Restore the soft-deleted transaction
+        $buy->restore();
 
         return redirect()->route('manage-shop')->with('successrestorebuy', 'Transaction restored successfully.');
     } else {
@@ -356,7 +366,7 @@ public function forceDeleteBuy($id)
     $buy = Buy::withTrashed()->find($id);
 
     if ($buy) {
-        // Permanently delete the transaction from the database
+     
         $buy->forceDelete();
 
         return redirect()->route('manage-shop')->with('successdeletebuy', 'Transaction permanently deleted.');
