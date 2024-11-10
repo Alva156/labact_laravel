@@ -58,6 +58,30 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         @endif
+                        @if (session('successsoftbook'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Book deleted successfully</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if (session('successrestorebook'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Book restored successfully</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if (session('successdeletebook'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Book permanently deleted</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if (session('updatedbook'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Ticket details updated successfully</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
 
                         <!-- Matches Table -->
                         <div id="matchesTable" class="table-responsive"
@@ -92,7 +116,7 @@
                                         <td></td>
                                         <td>${{ $ticket->price }}</td>
                                         <td></td>
-                                        <td>{{ $ticket->created_at ? $ticket->created_at->diffForHumans() : 'N/A' }}
+                                        <td>{{ $ticket->created_at ? $ticket->created_at->diffForHumans() : '' }}
                                         </td>
                                         <td>{{ $ticket->updated_at ? $ticket->updated_at->diffForHumans() : '' }}</td>
                                         <td>{{ $ticket->deleted_at ? $ticket->deleted_at->diffForHumans() : '' }}</td>
@@ -151,22 +175,55 @@
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Created by</th>
                                         <th scope="col">Created</th>
+                                        <th scope="col">Updated</th>
+                                        <th scope="col">Deleted</th>
+                                        <th scope="col"></th>
+                                        <th scope="col"></th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($books as $book)
-                                    <tr>
+                                    <tr class="{{ $book->deleted_at ? 'table-secondary' : '' }}">
                                         <th scope="row">{{$book->id}}</th>
                                         <td>{{$book->ticketID}}</td>
-                                        <td>{{ $book->tickets->first_team ?? 'N/A' }} vs
-                                            {{ $book->tickets->second_team ?? 'N/A' }}</td>
+                                        <td>{{ $book->tickets->first_team ?? '' }} vs
+                                            {{ $book->tickets->second_team ?? '' }}</td>
                                         <td>{{$book->fullname}}</td>
                                         <td>{{$book->address}}</td>
-
                                         <td>{{$book->number}}</td>
                                         <td>{{$book->quantity}}</td>
                                         <td>{{$book->user->name}}</td>
                                         <td>{{$book->created_at->diffForHumans()}}</td>
+                                        <td>{{ $book->updated_at ? $book->updated_at->diffForHumans() : '' }}</td>
+                                        <td>{{ $book->deleted_at ? $book->deleted_at->diffForHumans() : '' }}</td>
+
+                                        <td>
+                                            @if ($book->deleted_at)
+                                            <div class="d-flex">
+                                                <button class="btn btn-warning btn-sm me-2"
+                                                    onclick="confirmRestoreBook({{ $book->id }})">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="confirmPermanentDeleteBook({{ $book->id }})">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                            @else
+                                            <div class="d-flex">
+                                                <a href="{{ route('edit-book', $book->id) }}"
+                                                    class="btn btn-secondary btn-sm me-2">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="confirmDeleteBook({{ $book->id }})">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                            @endif
+                                        </td>
+                                        <td></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -184,7 +241,7 @@
                 <p class="mb-0">© 2024 Yankees Fan Zone. All rights reserved.</p>
             </div>
         </footer>
-        <!-- Soft Delete Confirmation Modal -->
+        <!-- Soft Delete Confirmation Modal for Match -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -207,7 +264,7 @@
             </div>
         </div>
 
-        <!-- Restore Confirmation Modal -->
+        <!-- Restore Confirmation Modal for Match -->
         <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -229,7 +286,7 @@
             </div>
         </div>
 
-        <!-- Permanent Delete Confirmation Modal -->
+        <!-- Permanent Delete Confirmation Modal for Match -->
         <div class="modal fade" id="permanentDeleteModal" tabindex="-1" aria-labelledby="permanentDeleteModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
@@ -253,6 +310,78 @@
             </div>
         </div>
 
+        <!-- Soft Delete Confirmation Modal for Book -->
+        <div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteBookModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this book?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form id="deleteBookForm" method="POST" action="">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore Confirmation Modal for Book -->
+        <div class="modal fade" id="restoreBookModal" tabindex="-1" aria-labelledby="restoreBookModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="restoreBookModalLabel">Confirm Restoration</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to restore this book?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form id="restoreBookForm" method="POST" action="">
+                            @csrf
+                            <button type="submit" class="btn btn-warning">Restore</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permanent Delete Confirmation Modal for Book -->
+        <div class="modal fade" id="permanentDeleteBookModal" tabindex="-1"
+            aria-labelledby="permanentDeleteBookModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="permanentDeleteBookModalLabel">Confirm Permanent Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to permanently delete this book? This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form id="permanentDeleteBookForm" method="POST" action="">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Permanently Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             const matchesButton = document.getElementById('matchesButton');
@@ -267,22 +396,46 @@
             });
         });
 
+        // Confirm deletion for match
         function confirmDelete(ticketId) {
             document.getElementById('deleteForm').action = `/delete-schedule/${ticketId}`;
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }
 
+        // Confirm restoration for match
         function confirmRestore(ticketId) {
             document.getElementById('restoreForm').action = `/restore-schedule/${ticketId}`;
             const restoreModal = new bootstrap.Modal(document.getElementById('restoreModal'));
             restoreModal.show();
         }
 
+        // Confirm permanent deletion for match
         function confirmPermanentDelete(ticketId) {
             document.getElementById('permanentDeleteForm').action = `/force-delete-schedule/${ticketId}`;
             const permanentDeleteModal = new bootstrap.Modal(document.getElementById('permanentDeleteModal'));
             permanentDeleteModal.show();
+        }
+
+        // Confirm deletion for book
+        function confirmDeleteBook(bookId) {
+            document.getElementById('deleteBookForm').action = `/delete-book/${bookId}`;
+            const deleteBookModal = new bootstrap.Modal(document.getElementById('deleteBookModal'));
+            deleteBookModal.show();
+        }
+
+        // Confirm restoration for book
+        function confirmRestoreBook(bookId) {
+            document.getElementById('restoreBookForm').action = `/restore-book/${bookId}`;
+            const restoreBookModal = new bootstrap.Modal(document.getElementById('restoreBookModal'));
+            restoreBookModal.show();
+        }
+
+        // Confirm permanent deletion for book
+        function confirmPermanentDeleteBook(bookId) {
+            document.getElementById('permanentDeleteBookForm').action = `/force-delete-book/${bookId}`;
+            const permanentDeleteBookModal = new bootstrap.Modal(document.getElementById('permanentDeleteBookModal'));
+            permanentDeleteBookModal.show();
         }
         </script>
 </x-app-layout>

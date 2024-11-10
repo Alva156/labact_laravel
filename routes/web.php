@@ -50,6 +50,12 @@ Route::middleware([
     Route::delete('/delete-product/{id}', [ProductController::class, 'destroy'])->name('delete-product');
     Route::post('/restore-product/{id}', [ProductController::class, 'restore'])->name('restore-product');
     Route::delete('/force-delete-product/{id}', [ProductController::class, 'forceDelete'])->name('force-delete-product');
+    Route::get('/edit-buy/{id}', [ProductController::class, 'editbuy'])->name('edit-buy');
+    Route::put('/update-buy/{id}', [ProductController::class, 'updatesbuy'])->name('update-buy');
+    Route::delete('/delete-buy/{id}', [ProductController::class, 'destroyBuy'])->name('delete-buy');
+    Route::post('/restore-buy/{id}', [ProductController::class, 'restoreBuy'])->name('restore-buy');
+    Route::delete('/force-delete-buy/{id}', [ProductController::class, 'forceDeleteBuy'])->name('force-delete-buy');
+
 
       //Matches Controller
     Route::get('/manage-schedule', [MatchesController::class, 'mschedule'])->name('manage-schedule');
@@ -60,6 +66,12 @@ Route::middleware([
     Route::post('/restore-schedule/{id}', [MatchesController::class, 'restore'])->name('restore-schedule');
     Route::delete('/force-delete-schedule/{id}', [MatchesController::class, 'forceDelete'])->name('force-delete-schedule');
     Route::put('/update-schedule/{id}', [MatchesController::class, 'updateschedule'])->name('update-schedule');
+    Route::get('/edit-book/{id}', [MatchesController::class, 'editbook'])->name('edit-book');
+    Route::put('/update-book/{id}', [MatchesController::class, 'updatesbook'])->name('update-book');
+    Route::delete('/delete-book/{id}', [MatchesController::class, 'destroyBook'])->name('delete-book');
+    Route::post('/restore-book/{id}', [MatchesController::class, 'restoreBook'])->name('restore-book');
+    Route::delete('/force-delete-book/{id}', [MatchesController::class, 'forceDeleteBook'])->name('force-delete-book');
+    
 
         //Histories Controller
     Route::get('/manage-history', [HistoriesController::class, 'mhistory'])->name('manage-history');

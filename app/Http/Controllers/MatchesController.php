@@ -31,7 +31,7 @@ class MatchesController extends Controller
         return view('user.user-schedreserve', compact('books'));
     }
     public function mschedule() {
-        $books = Book::latest()->paginate(5);
+        $books = Book::withTrashed()->latest()->paginate(5);
         $tickets = Tickets::withTrashed()->latest()->paginate(5);
     
         return view('admin.manage-schedule', compact('tickets', 'books'));
@@ -57,6 +57,15 @@ class MatchesController extends Controller
             return view('admin.edit-schedule', ['ticket' => $ticket]); 
         } else {
             abort(404, 'Ticket not found.'); 
+        }
+    }
+    public function editbook($id)
+    {
+        $book = Book::find($id);
+        if ($book) {
+            return view('admin.edit-book', ['book' => $book]); 
+        } else {
+            abort(404, 'Book not found.'); 
         }
     }
 
@@ -116,6 +125,39 @@ class MatchesController extends Controller
         return Redirect()->route('user-schedule')->with('success', 'Ticket purchased successfully!');
      
     }
+    public function updatesbook(Request $request, $id)
+    {
+        // Validate the incoming data
+        $validated = $request->validate([
+            'fullname' => 'required',
+            'address' => 'required',
+            'number' => 'required|digits_between:8,15',
+            'quantity' => 'required|min:1',
+        ], [
+            'fullname.required' => 'Please add your full name',
+            'address.required' => 'Please add your address',
+            'number.required' => 'Please add your contact number',
+            'number.digits_between' => 'The contact number must be between 8 and 15 digits',
+            'quantity.required' => 'Please indicate the quantity of tickets',
+            'quantity.min' => 'The quantity must be at least 1',
+        ]);
+
+        // Find the book by its ID
+        $book = Book::findOrFail($id);
+
+        // Update the book's fields
+        $book->fullname = $request->fullname;
+        $book->address = $request->address;
+        $book->number = $request->number;
+        $book->quantity = $request->quantity;
+        $book->updated_at = Carbon::now();  // Update the timestamp
+        $book->save();  // Save the updated record
+
+        // Redirect with a success message
+        return redirect()->route('manage-schedule')->with('updatedbook', 'Ticket details updated successfully!');
+    }
+    
+
 
     public function updateschedule(Request $request, $id) {
         $validated = $request->validate([
@@ -181,5 +223,43 @@ class MatchesController extends Controller
             return abort(404, 'Game not found.');
         }
     }
+    // Soft delete a book
+public function destroyBook($id)
+{
+    $deleted = Book::where('id', $id)->delete();
+
+    if ($deleted) {
+        return redirect()->route('manage-schedule')->with('successsoftbook', 'Book deleted successfully.');
+    } else {
+        return abort(404, 'Book not found.');
+    }
+}
+
+// Restore a soft-deleted book
+public function restoreBook($id)
+{
+    $book = Book::withTrashed()->find($id);
+
+    if ($book) {
+        $book->restore();
+        return redirect()->route('manage-schedule')->with('successrestorebook', 'Book restored successfully.');
+    } else {
+        return abort(404, 'Book not found.');
+    }
+}
+
+// Permanently delete a soft-deleted book
+public function forceDeleteBook($id)
+{
+    $book = Book::withTrashed()->find($id);
+
+    if ($book) {
+        $book->forceDelete();
+        return redirect()->route('manage-schedule')->with('successdeletebook', 'Book permanently deleted.');
+    } else {
+        return abort(404, 'Book not found.');
+    }
+}
+
   
 }

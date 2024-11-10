@@ -56,6 +56,30 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         @endif
+                        @if (session('updatedbuy'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Purchase details updated successfully</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if (session('successsoftbuy'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Transaction deleted successfully.</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if (session('successrestorebuy'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Transaction restored successfully</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @if (session('successdeletebuy'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Transaction permanently deleted</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
 
                         <!-- Products Table -->
                         <div id="productsTable" class="table-responsive"
@@ -131,26 +155,61 @@
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Created by</th>
                                         <th scope="col">Created at</th>
+                                        <th scope="col">Updated</th>
+                                        <th scope="col">Deleted</th>
+                                        <th scope="col"></th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($buys as $buy)
-                                    <tr>
+                                    <tr class="{{ $buy->deleted_at ? 'table-secondary' : '' }}">
                                         <th scope="row">{{$buy->id}}</th>
                                         <td>{{$buy->productID}}</td>
-                                        <td>{{ $buy->product->name ?? 'N/A' }}</td>
+                                        <td>{{ $buy->product->name ?? '' }}</td>
                                         <td>{{$buy->fullname}}</td>
                                         <td>{{$buy->address}}</td>
                                         <td>{{$buy->number}}</td>
                                         <td>{{$buy->quantity}}</td>
                                         <td>{{$buy->user->name}}</td>
                                         <td>{{$buy->created_at->diffForHumans()}}</td>
+                                        <td>{{ $buy->updated_at ? $buy->updated_at->diffForHumans() : '' }}</td>
+                                        <td>{{ $buy->deleted_at ? $buy->deleted_at->diffForHumans() : '' }}</td>
+
+                                        <td>
+                                            @if ($buy->deleted_at)
+                                            <div class="d-flex">
+                                                <button class="btn btn-warning btn-sm me-2"
+                                                    onclick="confirmRestorebuy({{ $buy->id }})">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="confirmPermanentDeletebuy({{ $buy->id }})">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                            @else
+                                            <div class="d-flex">
+                                                <a href="{{ route('edit-buy', $buy->id) }}"
+                                                    class="btn btn-secondary btn-sm me-2">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="confirmDeletebuy({{ $buy->id }})">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                            @endif
+                                        </td>
+
+                                        <td></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                             {{$buys->appends(['tab' => 'transactions'])->links()}}
                         </div>
+
 
                     </main>
                 </div>
@@ -231,6 +290,79 @@
             </div>
         </div>
     </div>
+    <!-- Soft Delete Confirmation Modal for Buy Transaction -->
+    <div class="modal fade" id="deleteBuyModal" tabindex="-1" aria-labelledby="deleteBuyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBuyModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this transaction? This will move it to the deleted items.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteBuyForm" method="POST" class="d-inline-block">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore Confirmation Modal for Buy Transaction -->
+    <div class="modal fade" id="restoreBuyModal" tabindex="-1" aria-labelledby="restoreBuyModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="restoreBuyModalLabel">Confirm Restore</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to restore this transaction?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="restoreBuyForm" method="POST" class="d-inline-block">
+                        @csrf
+                        @method('POST')
+                        <button type="submit" class="btn btn-success">Yes, Restore</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permanent Deletion Confirmation Modal for Buy Transaction -->
+    <div class="modal fade" id="permanentDeleteBuyModal" tabindex="-1" aria-labelledby="permanentDeleteBuyModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="permanentDeleteBuyModalLabel">Confirm Permanent Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to permanently delete this transaction? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="permanentDeleteBuyForm" method="POST" class="d-inline-block">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Yes, Delete Permanently</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -262,6 +394,24 @@
         document.getElementById('permanentDeleteForm').action = `/force-delete-product/${productId}`;
         const permanentDeleteModal = new bootstrap.Modal(document.getElementById('permanentDeleteModal'));
         permanentDeleteModal.show();
+    }
+
+    function confirmDeletebuy(id) {
+        const form = document.getElementById('deleteBuyForm');
+        form.action = `/delete-buy/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteBuyModal')).show();
+    }
+
+    function confirmRestorebuy(id) {
+        const form = document.getElementById('restoreBuyForm');
+        form.action = `/restore-buy/${id}`;
+        new bootstrap.Modal(document.getElementById('restoreBuyModal')).show();
+    }
+
+    function confirmPermanentDeletebuy(id) {
+        const form = document.getElementById('permanentDeleteBuyForm');
+        form.action = `/force-delete-buy/${id}`;
+        new bootstrap.Modal(document.getElementById('permanentDeleteBuyModal')).show();
     }
     </script>
 </x-app-layout>

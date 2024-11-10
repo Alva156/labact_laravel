@@ -55,7 +55,7 @@ class ProductController extends Controller
     }
     
     public function mshop(){
-        $buys = Buy::latest()->paginate(5);
+        $buys = Buy::withTrashed()->latest()->paginate(5);
         $products = Product::withTrashed()->latest()->paginate(5);
         return view('admin.manage-shop', compact('products', 'buys'));
     
@@ -80,6 +80,15 @@ class ProductController extends Controller
         $product = Product::find($id);
         if ($product) {
             return view('user.user-buy', ['product' => $product]); 
+        } else {
+            abort(404, 'Product not found.'); 
+        }
+    }
+    public function editbuy($id)
+    {
+        $buy = Buy::find($id);
+        if ($buy) {
+            return view('admin.edit-buy', ['buy' => $buy]); 
         } else {
             abort(404, 'Product not found.'); 
         }
@@ -233,6 +242,43 @@ public function updateproduct(Request $request, $id) {
 
     return redirect()->route('manage-shop')->with('updated', 'Product updated successfully!');
 }
+public function updatesbuy(Request $request, $id)
+{
+    // Validate the incoming data
+    $validated = $request->validate([
+        'fullname' => 'required|string|max:100',
+        'address' => 'required|min:10',
+        'number' => 'required|numeric|digits_between:8,15',
+        'quantity' => 'required|integer|min:1',
+    ], [
+        'fullname.required' => 'Please add your full name',
+        'fullname.string' => 'The full name must contain valid characters',
+        'fullname.max' => 'The full name must not exceed 100 characters',
+        'address.required' => 'Please add your address',
+        'address.min' => 'The address must be at least 10 characters long',
+        'number.required' => 'Please add your contact number',
+        'number.numeric' => 'The contact number must be a valid number',
+        'number.digits_between' => 'The contact number must be between 8 and 15 digits',
+        'quantity.required' => 'Please indicate the quantity of the product',
+        'quantity.integer' => 'The quantity must be a whole number',
+        'quantity.min' => 'The quantity must be at least 1',
+    ]);
+
+    // Find the purchase by its ID
+    $buy = Buy::findOrFail($id);
+
+    // Update the Buy record's fields
+    $buy->fullname = $request->fullname;
+    $buy->address = $request->address;
+    $buy->number = $request->number;
+    $buy->quantity = $request->quantity;
+    $buy->updated_at = Carbon::now();  // Update the timestamp
+    $buy->save();  // Save the updated record
+
+    // Redirect with a success message
+    return redirect()->route('manage-shop')->with('updatedbuy', 'Purchase details updated successfully!');
+}
+
  // Soft delete a product
  public function destroy($id)
  {
@@ -276,6 +322,49 @@ public function updateproduct(Request $request, $id) {
         return abort(404, 'Product not found.');
     }
 }
+// Soft delete a buy (transaction)
+public function destroyBuy($id)
+{
+    $buy = Buy::where('id', $id)->first();
+
+    if ($buy) {
+        $buy->delete(); // Soft delete the transaction
+
+        return redirect()->route('manage-shop')->with('successsoftbuy', 'Transaction deleted successfully.');
+    } else {
+        return abort(404, 'Transaction not found.');
+    }
+}
+
+// Restore a soft-deleted buy (transaction)
+public function restoreBuy($id)
+{
+    $buy = Buy::withTrashed()->find($id);
+
+    if ($buy) {
+        $buy->restore(); // Restore the soft-deleted transaction
+
+        return redirect()->route('manage-shop')->with('successrestorebuy', 'Transaction restored successfully.');
+    } else {
+        return abort(404, 'Transaction not found.');
+    }
+}
+
+// Permanently delete a buy (transaction)
+public function forceDeleteBuy($id)
+{
+    $buy = Buy::withTrashed()->find($id);
+
+    if ($buy) {
+        // Permanently delete the transaction from the database
+        $buy->forceDelete();
+
+        return redirect()->route('manage-shop')->with('successdeletebuy', 'Transaction permanently deleted.');
+    } else {
+        return abort(404, 'Transaction not found.');
+    }
+}
+
 
 
     
