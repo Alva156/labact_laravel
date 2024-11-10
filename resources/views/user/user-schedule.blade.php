@@ -5,7 +5,12 @@
             <p class="lead mb-4" style="color:#001C43">Check out the upcoming Yankees games and secure your tickets for
                 an unforgettable
                 experience at Yankee Stadium!</p>
-
+            <div class="d-flex justify-content-center">
+                <a href="{{ route('user-schedreserve') }}" class="mb-4 btn btn-lg text-light"
+                    style="background-color:green">
+                    My Reservations
+                </a>
+            </div>
             @if (@session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Ticket reserved successfully! Proceed to the ticket cashier personnel to complete your

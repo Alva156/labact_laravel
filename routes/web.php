@@ -21,11 +21,6 @@ Route::get('/history', [HistoriesController::class, 'history'])->name('history')
 Route::get('/faqs', [FaqsController::class, 'faqs'])->name('faqs');
 Route::get('/opinions', [OpinionsController::class, 'opinions'])->name('opinions');
 Route::get('/contact', [ProductController::class, 'contact'])->name('contact');
-Route::delete('/delete-opinion/{id}', [OpinionsController::class, 'destroy'])->name('delete-opinion');
-Route::post('/restore-opinion/{id}', [OpinionsController::class, 'restore'])->name('restore-opinion');
-Route::delete('/force-delete-opinion/{id}', [OpinionsController::class, 'forceDelete'])->name('force-delete-opinion');
-
-
 
 // Authenticated Users and Admin
 Route::middleware([
@@ -36,6 +31,9 @@ Route::middleware([
     
     // Admin and User
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::delete('/delete-opinion/{id}', [OpinionsController::class, 'destroy'])->name('delete-opinion');
+    Route::post('/restore-opinion/{id}', [OpinionsController::class, 'restore'])->name('restore-opinion');
+    Route::delete('/force-delete-opinion/{id}', [OpinionsController::class, 'forceDelete'])->name('force-delete-opinion');
     
     // Admin
     Route::middleware('isRole:admin')->group(function () {
@@ -94,11 +92,13 @@ Route::middleware([
     Route::get('/user-schedule', [MatchesController::class, 'userschedule'])->name('user-schedule');
     Route::get('/user-book/{id}', [MatchesController::class, 'userbook'])->name('user-book');
     Route::post('/store-book', [MatchesController::class, 'storebook'])->name('store-book');
+    Route::get('/user-schedreserve', [MatchesController::class, 'userschedreserve'])->name('user-schedreserve');
 
         //Product Controller
     Route::get('/user-shop', [ProductController::class, 'usershop'])->name('user-shop');
     Route::get('/user-buy/{id}', [ProductController::class, 'userbuy'])->name('user-buy');
     Route::post('/store-buy', [ProductController::class, 'storesbuy'])->name('store-buy');
+    Route::get('/user-shopreserve', [ProductController::class, 'usershopreserve'])->name('user-shopreserve');
     Route::get('/user-product-post/{slug}', [ProductController::class, 'post'])->where('slug', '[a-zA-Z0-9\-]+')->name('user-product-post');
 
         //Opinions Controller

@@ -21,6 +21,15 @@ class MatchesController extends Controller
         $tickets = Tickets::all();
         return view('user.user-schedule', compact('tickets'));
     }
+    public function userschedreserve()
+    {
+        $books = Book::where('user_id', Auth::id())
+                    ->latest()
+                    ->withTrashed()
+                    ->paginate(5);
+    
+        return view('user.user-schedreserve', compact('books'));
+    }
     public function mschedule() {
         $books = Book::latest()->paginate(5);
         $tickets = Tickets::withTrashed()->latest()->paginate(5);

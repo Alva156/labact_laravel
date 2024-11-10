@@ -124,6 +124,7 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Product ID</th>
+                                        <th scope="col">Product Name</th>
                                         <th scope="col">Customer Name</th>
                                         <th scope="col">Address</th>
                                         <th scope="col">Contact Number</th>
@@ -137,6 +138,7 @@
                                     <tr>
                                         <th scope="row">{{$buy->id}}</th>
                                         <td>{{$buy->productID}}</td>
+                                        <td>{{ $buy->product->name ?? 'N/A' }}</td>
                                         <td>{{$buy->fullname}}</td>
                                         <td>{{$buy->address}}</td>
                                         <td>{{$buy->number}}</td>

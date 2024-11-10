@@ -5,7 +5,30 @@
                 <div class="container">
                     <h1 class="display-4 mb-4">Your Opinions</h1>
                     <p class="lead mb-5">You can edit and delete your opinions.</p>
-
+                    @if (session('successupdate'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Your opinion has been updated successfully</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    @if (session('successsoft'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Opinion deleted successfully</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    @if (session('successrestore'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Opinion restored successfully</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    @if (session('successdelete'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Opinion permanently deleted</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     <div class="row">
                         <!-- Fan Opinion 1 -->
                         @foreach($opinions as $opinion)
@@ -22,7 +45,7 @@
 
                                     <!-- Edit Button -->
                                     <a href="{{ route('user-editopinions', ['id' => $opinion->id]) }}"
-                                        class=" btn btn-lg text-light" style="background-color:blue">
+                                        class=" btn btn-lg text-light" style="background-color:#001C43">
                                         <i class="fas fa-edit"></i>
                                     </a>
 

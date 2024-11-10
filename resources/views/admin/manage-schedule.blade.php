@@ -143,6 +143,7 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Match ID</th>
+                                        <th scope="col">Match </th>
                                         <th scope="col">Full Name</th>
                                         <th scope="col">Address</th>
 
@@ -157,6 +158,8 @@
                                     <tr>
                                         <th scope="row">{{$book->id}}</th>
                                         <td>{{$book->ticketID}}</td>
+                                        <td>{{ $book->tickets->first_team ?? 'N/A' }} vs
+                                            {{ $book->tickets->second_team ?? 'N/A' }}</td>
                                         <td>{{$book->fullname}}</td>
                                         <td>{{$book->address}}</td>
 

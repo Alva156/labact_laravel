@@ -18,11 +18,17 @@ class Buy extends Model
         'number',
         'quantity',
         
+        
     ];
 
 
     public function user(){
         return $this->hasOne(User::class, 'id' , 'user_id');
     }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'productID');
+    }
+
    
 }

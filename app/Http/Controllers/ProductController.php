@@ -44,6 +44,15 @@ class ProductController extends Controller
         $products = Product::all();
         return view('user.user-shop', compact('products'));
     }
+    public function usershopreserve()
+    {
+        $buys = Buy::where('user_id', Auth::id())
+                    ->latest()
+                    ->withTrashed()
+                    ->paginate(5);
+    
+        return view('user.user-shopreserve', compact('buys'));
+    }
     
     public function mshop(){
         $buys = Buy::latest()->paginate(5);

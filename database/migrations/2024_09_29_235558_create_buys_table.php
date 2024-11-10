@@ -16,7 +16,6 @@ return new class extends Migration
             $table->integer('productID');
             $table->string('fullname');
             $table->string('address');
-            $table->string('method');
             $table->string('number');
             $table->integer('quantity');
             $table->integer('user_id');

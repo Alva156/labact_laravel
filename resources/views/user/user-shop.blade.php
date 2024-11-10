@@ -3,6 +3,12 @@
         <div class="container">
             <h1 class="display-4 mb-4 text-center">Shop</h1>
             <p class="lead mb-3 text-center">Browse our selection of baseball gear and memorabilia.</p>
+            <div class="d-flex justify-content-center">
+                <a href="{{ route('user-shopreserve') }}" class="mb-4 btn btn-lg text-light"
+                    style="background-color:green">
+                    My Reservations
+                </a>
+            </div>
             @if (@session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Product reserved successfully, proceed to the physical store in Yankees Stadium to complete its
