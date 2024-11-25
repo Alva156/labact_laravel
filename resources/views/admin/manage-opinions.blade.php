@@ -43,6 +43,7 @@
                                         <th scope="col">Name</th>
                                         <th scope="col">Content</th>
                                         <th scope="col">Created</th>
+                                        <th scope="col">Updated</th>
                                         <th scope="col">Deleted</th>
                                         <th scope="col"></th>
                                         <th scope="col"></th>
@@ -56,6 +57,7 @@
                                         <td>{{ $opinion->user->name }}</td>
                                         <td>{{ $opinion->content }}</td>
                                         <td>{{ $opinion->created_at->diffForHumans() }}</td>
+                                        <td>{{ $opinion->updated_at ? $opinion->updated_at->diffForHumans() : '' }}</td>
                                         <td>{{ $opinion->deleted_at ? $opinion->deleted_at->diffForHumans() : '' }}</td>
                                         <td></td>
                                         <td>

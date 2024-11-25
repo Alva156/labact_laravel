@@ -34,7 +34,7 @@
                                         <th scope="col">Address</th>
                                         <th scope="col">Contact Number</th>
                                         <th scope="col">Quantity</th>
-                                        <th scope="col">Price per Item</th>
+                                        <th scope="col">Price per Product</th>
                                         <th scope="col">Total Price</th>
                                         <th scope="col">Date of Reservation</th>
                                         <th scope="col"></th>
