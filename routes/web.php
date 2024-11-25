@@ -31,7 +31,6 @@ Route::middleware([
     
     // Admin and User
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
- 
     Route::delete('/force-delete-opinion/{id}', [OpinionsController::class, 'forceDelete'])->name('force-delete-opinion');
     
     // Admin

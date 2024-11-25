@@ -103,8 +103,7 @@ public function destroy($id)
     $deleted = Opinion::where('id', $id)->delete();
 
     if ($deleted) {
-        $route = auth()->user()->role === 'admin' ? 'manage-opinions' : 'user-myopinions';
-        return redirect()->route($route)->with('successsoft', 'Opinion deleted successfully.');
+        return redirect()->route('manage-opinions')->with('successsoft', 'Opinion deleted successfully.');
     } else {
         return abort(404, 'Opinion not found.');
     }
@@ -117,8 +116,7 @@ public function restore($id)
 
     if ($opinion) {
         $opinion->restore();
-        $route = auth()->user()->role === 'admin' ? 'manage-opinions' : 'user-myopinions';
-        return redirect()->route($route)->with('successrestore', 'Opinion restored successfully.');
+        return redirect()->route('manage-opinions')->with('successrestore', 'Opinion restored successfully.');
     } else {
         return abort(404, 'Opinion not found.');
     }
