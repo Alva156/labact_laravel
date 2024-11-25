@@ -335,11 +335,9 @@ public function updatesbuy(Request $request, $id)
 // Soft delete a buy (transaction)
 public function destroyBuy($id)
 {
-    $buy = Buy::where('id', $id)->first();
+    $buy = Buy::where('id', $id)->delete();
 
     if ($buy) {
-        $buy->delete(); 
-
         return redirect()->route('manage-shop')->with('successsoftbuy', 'Transaction deleted successfully.');
     } else {
         return abort(404, 'Transaction not found.');
